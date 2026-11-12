@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>InvoiceHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF3F7;--sf:#fff;--ink:#10233F;--mut:#5B6B82;--line:#D9E2EC;--teal:#0E8F7E;--gold:#FFB627;--coral:#E4572E}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 "DM Sans",system-ui,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+h1,h2,h3{font-family:"Bricolage Grotesque","DM Sans",sans-serif;margin:0;letter-spacing:-.02em}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.mut{color:var(--mut)}
+.logo{font:800 22px "Bricolage Grotesque",sans-serif;display:flex;align-items:center;gap:8px}
+.logo i{width:26px;height:26px;border-radius:8px 8px 8px 2px;background:var(--teal);display:inline-block}
+button,input,select{font:inherit}
+input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);min-width:0}
+label{display:grid;gap:3px;font-size:13px;color:var(--mut)}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--teal);color:#fff}
+.btn.g{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.d{background:transparent;color:var(--coral);border:1px solid var(--line)}
+#auth{min-height:100vh;display:grid;place-items:center;padding:20px}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:22px;padding:24px;width:100%;max-width:400px;display:grid;gap:14px;box-shadow:0 30px 60px -30px rgba(16,35,63,.25)}
+.err{color:var(--coral);font-size:14px;min-height:20px;margin:0}
+header.top{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--line)}
+.main{display:grid;gap:18px;padding:18px 20px;max-width:1200px;margin:0 auto}
+@media(min-width:960px){.main{grid-template-columns:420px 1fr;align-items:start}}
+.panel{background:var(--sf);border:1px solid var(--line);border-radius:20px;padding:16px;display:grid;gap:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
+.row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;cursor:pointer}
+.row em{font-style:normal;font-weight:700}
+#list{display:grid;gap:8px;max-height:220px;overflow:auto}
+.ir{display:grid;grid-template-columns:1fr 64px 90px 34px;gap:6px;margin-bottom:6px}
+.ir button{border:0;background:transparent;color:var(--coral);font-size:20px;cursor:pointer}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;font-weight:700;font-size:13px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+/* paper */
+.paper{background:#fff;color:#10233F;border:1px solid var(--line);border-radius:14px;padding:28px;min-height:420px}
+.paper header{display:flex;justify-content:space-between;gap:12px}
+.paper h2{font-size:26px}.paper small{color:#5B6B82}
+.paper table{width:100%;border-collapse:collapse;margin:20px 0 10px;font-size:14px}
+.paper th{text-align:left;color:#5B6B82;font-weight:500;padding:6px 0;border-bottom:1px solid #D9E2EC}
+.paper td{padding:8px 0;border-bottom:1px solid #EEF3F7}
+.paper td:not(:first-child),.paper th:not(:first-child){text-align:right}
+.paper dl{margin:0 0 0 auto;width:240px;display:grid;grid-template-columns:1fr auto;gap:3px 12px;font-size:14px}.paper dd{margin:0;text-align:right}
+.paper .g{font:800 22px "Bricolage Grotesque",sans-serif}
+.paper.bold{background:#10233F;color:#fff}.paper.bold small,.paper.bold th{color:#9FB0C6}.paper.bold th,.paper.bold td{border-color:#25395A}
+.paper.soft{background:#FFF8E6;border-color:#FFE2A0;border-radius:26px}.paper.soft h2{color:#0E8F7E}
+.paper.elegant{font-family:Georgia,serif;border:3px double #C9A24B;background:#FFFEFA}.paper.elegant h2{font-family:Georgia,serif;font-style:italic}
+.paper.fresh{border-top:10px solid #0E8F7E;background:#F3FBF9}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:99px;font-size:14px;z-index:9}
+</style>
+</head>
+<body>
+<div id="auth" hidden>
+<form class="card" id="authForm">
+<div class="logo"><i></i>InvoiceHub</div>
+<h1 style="font-size:26px">Sign in to send invoices</h1>
+<label>Email<input id="em" type="email" autocomplete="email" required></label>
+<label>Password (6+ characters)<input id="pw" type="password" autocomplete="current-password" minlength="6" required></label>
+<p class="err" id="err" role="alert"></p>
+<button class="btn" id="signin" type="submit">Sign in</button>
+<button class="btn g" id="signup" type="button">Create account</button>
+</form>
+</div>
+
+<div id="app" hidden>
+<header class="top"><div class="logo"><i></i>InvoiceHub</div><div class="acts"><button class="btn g" id="new">New invoice</button><button class="btn g" id="out">Sign out</button></div></header>
+<div class="main">
+<div style="display:grid;gap:18px">
+<div class="panel"><h3>Your invoices</h3><div id="list"></div></div>
+<div class="panel">
+<h3>Invoice details</h3>
+<div class="grid2">
+<label>Your business<input id="biz"></label>
+<label>Invoice number<input id="num"></label>
+<label>Client name<input id="cli"></label>
+<label>Client email<input id="mail" type="email"></label>
+<label>GST<select id="gst"><option value="0">None</option><option value="5">5%</option><option value="12">12%</option><option value="18">18%</option></select></label>
+<label>Due in<select id="due"><option value="7">7 days</option><option value="15">15 days</option><option value="30">30 days</option></select></label>
+<label class="full">Status<select id="st"><option value="draft">Draft</option><option value="sent">Sent</option><option value="paid">Paid</option></select></label>
+</div>
+<div><div class="mut" style="font-size:13px;margin-bottom:4px">Items: description, quantity, price (₹)</div><div id="items"></div><button class="btn g" id="add">Add item</button></div>
+<div class="tabs" id="tabs" role="group" aria-label="Template"><button data-t="classic">Classic</button><button data-t="bold">Bold</button><button data-t="soft">Soft</button><button data-t="elegant">Elegant</button><button data-t="fresh">Fresh</button></div>
+<div class="acts"><button class="btn" id="save">Save invoice</button><button class="btn g" id="pdf">Download PDF</button><button class="btn d" id="del">Delete</button></div>
+</div>
+</div>
+<div id="paper" class="paper"></div>
+</div>
+</div>
+<div id="toast" role="status" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+// 1. Paste your Supabase values here (Project Settings > API).
+var SUPABASE_URL = "https://omzebtgnqvxqmfvowywz.supabase.co";
+var SUPABASE_KEY = "sb_publishable_dNmjuL7oIyYJzOSSG6XsNg_gAj0ewoE";
+
+var $ = function (id) { return document.getElementById(id); };
+var sb = null, cur = null, lst = [];
+var inr = function (n) { return "₹" + Math.round(n).toLocaleString("en-IN"); };
+var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+
+function toast(m) {
+  var t = $("toast"); t.textContent = m; t.hidden = false;
+  clearTimeout(toast.h); toast.h = setTimeout(function () { t.hidden = true; }, 3500);
+}
+function blank() {
+  return { id: null, number: "INV-" + String(Date.now()).slice(-5), business: "", client_name: "", client_email: "",
+    template: "classic", gst: 18, due_days: 15, items: [{ d: "", q: 1, p: 0 }], status: "draft" };
+}
+function total(i) {
+  var s = 0; (i.items || []).forEach(function (x) { s += (+x.q || 0) * (+x.p || 0); });
+  var t = s * (+i.gst || 0) / 100; return { s: s, t: t, g: s + t };
+}
+
+/* ---------- auth ---------- */
+function show(session) {
+  $("auth").hidden = !!session; $("app").hidden = !session;
+  if (session) { loadList(); if (!cur) edit(blank()); }
+}
+function msg(m) { $("err").textContent = m || ""; }
+function authInput() { return { email: $("em").value.trim(), password: $("pw").value }; }
+$("authForm").addEventListener("submit", function (e) {
+  e.preventDefault(); msg("");
+  sb.auth.signInWithPassword(authInput()).then(function (r) { if (r.error) msg(r.error.message); });
+});
+$("signup").addEventListener("click", function () {
+  msg("");
+  var a = authInput();
+  if (!a.email || a.password.length < 6) { msg("Enter an email and a password of at least 6 characters."); return; }
+  sb.auth.signUp(a).then(function (r) {
+    if (r.error) { msg(r.error.message); return; }
+    if (!r.data.session) msg("Account created. Check your email to confirm it, then sign in.");
+  });
+});
+$("out").addEventListener("click", function () { cur = null; sb.auth.signOut(); });
+
+/* ---------- list ---------- */
+function loadList() {
+  sb.from("invoices").select("*").order("created_at", { ascending: false }).then(function (r) {
+    if (r.error) { toast(r.error.message); return; }
+    lst = r.data || [];
+    $("list").innerHTML = lst.length ? lst.map(function (i) {
+      return '<button class="row" data-id="' + i.id + '"><b>' + esc(i.number) + '</b><span>' + esc(i.client_name || "No client") + '</span><em>' + inr(total(i).g) + '</em></button>';
+    }).join("") : '<p class="mut" style="margin:0">No saved invoices yet. Fill in the form and save your first one.</p>';
+  });
+}
+$("list").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-id]"); if (!b) return;
+  var f = lst.filter(function (x) { return x.id === b.dataset.id; })[0];
+  if (f) edit(JSON.parse(JSON.stringify(f)));
+});
+$("new").addEventListener("click", function () { edit(blank()); });
+
+/* ---------- editor ---------- */
+var map = { biz: "business", num: "number", cli: "client_name", mail: "client_email", gst: "gst", due: "due_days", st: "status" };
+function edit(i) {
+  cur = i;
+  Object.keys(map).forEach(function (k) { $(k).value = i[map[k]] == null ? "" : i[map[k]]; });
+  rows(); tpl(i.template); prev();
+}
+Object.keys(map).forEach(function (k) {
+  $(k).addEventListener("input", function () {
+    var v = $(k).value; cur[map[k]] = (k === "gst" || k === "due") ? +v : v; prev();
+  });
+});
+function rows() {
+  $("items").innerHTML = cur.items.map(function (x, k) {
+    return '<div class="ir"><input data-k="' + k + '" data-f="d" placeholder="Description" value="' + esc(x.d) + '">' +
+      '<input data-k="' + k + '" data-f="q" type="number" min="0" value="' + esc(x.q) + '">' +
+      '<input data-k="' + k + '" data-f="p" type="number" min="0" value="' + esc(x.p) + '">' +
+      '<button data-del="' + k + '" aria-label="Remove item">×</button></div>';
+  }).join("");
+}
+$("items").addEventListener("input", function (e) {
+  var t = e.target; if (!t.dataset.f) return;
+  cur.items[+t.dataset.k][t.dataset.f] = t.dataset.f === "d" ? t.value : (+t.value || 0); prev();
+});
+$("items").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-del]"); if (!b) return;
+  cur.items.splice(+b.dataset.del, 1); if (!cur.items.length) cur.items.push({ d: "", q: 1, p: 0 });
+  rows(); prev();
+});
+$("add").addEventListener("click", function () { cur.items.push({ d: "", q: 1, p: 0 }); rows(); prev(); });
+function tpl(t) {
+  cur.template = t;
+  document.querySelectorAll("#tabs button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.t === t)); });
+}
+$("tabs").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-t]"); if (b) { tpl(b.dataset.t); prev(); }
+});
+function prev() {
+  var T = total(cur), p = $("paper");
+  var due = new Date(Date.now() + (+cur.due_days || 0) * 86400000).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+  p.className = "paper " + (cur.template === "classic" ? "" : cur.template);
+  p.innerHTML = '<header><div><h2>' + esc(cur.business || "Your business") + '</h2><small>' + esc(cur.number) + '</small></div>' +
+    '<div style="text-align:right"><small>Due</small><br><strong>' + due + '</strong></div></header>' +
+    '<p style="margin:20px 0 0"><small>Billed to</small><br><strong>' + esc(cur.client_name || "Client name") + '</strong><br><small>' + esc(cur.client_email) + '</small></p>' +
+    '<table><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead><tbody>' +
+    cur.items.map(function (x) {
+      return '<tr><td>' + esc(x.d || "Item") + '</td><td>' + esc(x.q) + '</td><td>' + inr(+x.p || 0) + '</td><td>' + inr((+x.q || 0) * (+x.p || 0)) + '</td></tr>';
+    }).join("") + '</tbody></table>' +
+    '<dl><dt>Subtotal</dt><dd>' + inr(T.s) + '</dd>' + (+cur.gst ? '<dt>GST ' + cur.gst + '%</dt><dd>' + inr(T.t) + '</dd>' : '') +
+    '<dt class="g">Total</dt><dd class="g">' + inr(T.g) + '</dd></dl>';
+}
+
+/* ---------- save / delete / pdf ---------- */
+$("save").addEventListener("click", function () {
+  var row = { number: cur.number, business: cur.business, client_name: cur.client_name, client_email: cur.client_email,
+    template: cur.template, gst: cur.gst, due_days: cur.due_days, items: cur.items, status: cur.status };
+  var q = cur.id ? sb.from("invoices").update(row).eq("id", cur.id).select().single() : sb.from("invoices").insert(row).select().single();
+  q.then(function (r) {
+    if (r.error) { toast("Could not save: " + r.error.message); return; }
+    cur.id = r.data.id; toast("Invoice saved"); loadList();
+  });
+});
+$("del").addEventListener("click", function () {
+  if (!cur.id) { edit(blank()); return; }
+  if (!confirm("Delete this invoice? This cannot be undone.")) return;
+  sb.from("invoices").delete().eq("id", cur.id).then(function (r) {
+    if (r.error) { toast("Could not delete: " + r.error.message); return; }
+    toast("Invoice deleted"); edit(blank()); loadList();
+  });
+});
+$("pdf").addEventListener("click", function () {
+  if (typeof html2pdf === "undefined") { toast("PDF tool did not load. Check your internet and refresh."); return; }
+  html2pdf().set({ margin: 10, filename: cur.number + ".pdf", html2canvas: { scale: 2 }, jsPDF: { unit: "mm", format: "a4" } }).from($("paper")).save();
+});
+
+/* ---------- start ---------- */
+if (SUPABASE_URL.indexOf("PASTE") === 0 || typeof supabase === "undefined") {
+  $("auth").hidden = false;
+  $("authForm").innerHTML = '<div class="logo"><i></i>InvoiceHub</div><h1 style="font-size:22px">Almost ready</h1><p class="mut">Open index.html in a text editor and paste your Supabase project URL and key at the top of the script. The README explains where to find them.</p>';
+} else {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  sb.auth.getSession().then(function (r) { show(r.data.session); });
+  sb.auth.onAuthStateChange(function (_e, s) { show(s); });
+}
+</script>
+</body>
+</html>
