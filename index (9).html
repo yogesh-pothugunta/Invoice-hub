@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>InvoiceHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF3F7;--sf:#fff;--ink:#10233F;--mut:#5B6B82;--line:#D9E2EC;--teal:#0E8F7E;--gold:#FFB627;--coral:#E4572E}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 "DM Sans",system-ui,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+h1,h2,h3{font-family:"Bricolage Grotesque","DM Sans",sans-serif;margin:0;letter-spacing:-.02em}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.mut{color:var(--mut)}
+.logo{font:800 22px "Bricolage Grotesque",sans-serif;display:flex;align-items:center;gap:8px}
+.logo i{width:26px;height:26px;border-radius:8px 8px 8px 2px;background:var(--teal);display:inline-block}
+button,input,select,textarea{font:inherit}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--teal);color:#fff}
+.btn.g{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.d{background:transparent;color:var(--coral);border:1px solid var(--line)}
+.btn:disabled{opacity:.6;cursor:wait}
+header.top{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--sf);border-bottom:1px solid var(--line)}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:99px;font-size:14px;z-index:9;max-width:92vw;text-align:center}
+.inv{--band:#10233F;--bi:#fff;--rule:#10233F;--box:#E9EEF6;--hd:#10233F;--hi:#fff;--ac:#10233F;--ai:#fff;background:#fff;color:#10233F;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ib{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;background:var(--band);color:var(--bi);border-bottom:4px solid var(--rule)}
+.ib .lg{background:#fff;border-radius:8px;padding:5px;display:flex}.ib .lg img{max-height:44px;max-width:150px;display:block}
+.ib .nm{font:800 19px "Bricolage Grotesque",sans-serif;overflow-wrap:anywhere}
+.ib .tt{font:800 clamp(22px,6vw,32px) "Bricolage Grotesque",sans-serif;letter-spacing:.05em}
+.ip{padding:18px 20px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box{background:var(--box);border-radius:8px;padding:11px 12px;font-size:13px;line-height:1.55;overflow-wrap:anywhere}
+.box b{display:block;font-size:11px;letter-spacing:.07em;color:#5B6B82;margin-bottom:2px}
+.meta{display:grid;grid-template-columns:auto auto;gap:3px 18px;justify-content:end;margin:16px 0 0;font-size:13px}
+.meta dt{color:#5B6B82}.meta dd{margin:0;font-weight:700;text-align:right}
+.tw{overflow-x:auto;margin-top:14px}
+.it{width:100%;border-collapse:collapse;font-size:13px}
+.it th{background:var(--hd);color:var(--hi);padding:8px;text-align:right;font-weight:700;white-space:nowrap}
+.it td{padding:8px;border-bottom:1px solid #D9E2EC;text-align:right;white-space:nowrap}
+.it th:first-child,.it td:first-child{text-align:left;white-space:normal;overflow-wrap:break-word;word-break:normal;min-width:96px}
+.sum2{display:grid;grid-template-columns:auto auto;gap:4px 24px;justify-content:end;margin:12px 0 8px;font-size:14px}
+.sum2 dd{margin:0;text-align:right}
+.due{display:flex;justify-content:space-between;gap:16px;background:var(--ac);color:var(--ai);border-radius:6px;padding:11px 14px;font-weight:800;margin-left:auto;max-width:340px}
+.pay{display:flex;gap:14px;align-items:center;margin-top:18px;font-size:13px}
+.nt{font-size:13px;margin:16px 0 0;overflow-wrap:anywhere}.nt b{font-size:11px;letter-spacing:.07em;color:#5B6B82}
+@media(max-width:480px){.ip{padding:14px 12px}.ib{padding:14px 14px}.it{font-size:12px}.it th,.it td{padding:7px 4px}.box{font-size:12px;padding:10px}.due{padding:10px 12px}}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);min-width:0}
+textarea{resize:vertical}
+label{display:grid;gap:3px;font-size:13px;color:var(--mut)}
+#auth{min-height:100vh;display:grid;place-items:center;padding:20px}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:22px;padding:24px;width:100%;max-width:400px;display:grid;gap:14px;box-shadow:0 30px 60px -30px rgba(16,35,63,.25)}
+.err{color:var(--coral);font-size:14px;min-height:20px;margin:0}
+.main{display:grid;gap:18px;padding:18px 20px;max-width:1240px;margin:0 auto}
+@media(min-width:980px){.main{grid-template-columns:440px 1fr;align-items:start}}
+.panel{background:var(--sf);border:1px solid var(--line);border-radius:20px;padding:16px;display:grid;gap:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
+.row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;cursor:pointer}
+.row em{font-style:normal;font-weight:700}
+#list{display:grid;gap:8px;max-height:220px;overflow:auto}
+#sum{display:grid;grid-template-columns:1fr 1fr;gap:10px}#sum div{background:var(--bg);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--mut)}#sum b{display:block;font:800 20px "Bricolage Grotesque",sans-serif;color:var(--ink)}
+.ir{display:grid;grid-template-columns:1fr 64px 90px 34px;gap:6px;margin-bottom:6px}
+.ir button{border:0;background:transparent;color:var(--coral);font-size:20px;cursor:pointer}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;font-weight:700;font-size:13px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+</style>
+</head>
+<body>
+<div id="auth" hidden>
+<form class="card" id="authForm">
+<div class="logo"><i></i>InvoiceHub</div>
+<h1 style="font-size:26px">Sign in to send invoices</h1>
+<label>Email<input id="em" type="email" autocomplete="email" required></label>
+<label>Password (6+ characters)<input id="pw" type="password" autocomplete="current-password" minlength="6" required></label>
+<p class="err" id="err" role="alert"></p>
+<button class="btn" id="signin" type="submit">Sign in</button>
+<button class="btn g" id="signup" type="button">Create account</button>
+</form>
+</div>
+
+<div id="app" hidden>
+<header class="top"><div class="logo"><i></i>InvoiceHub</div><div class="acts"><button class="btn g" id="new">New invoice</button><button class="btn g" id="out">Sign out</button></div></header>
+<div class="main">
+<div style="display:grid;gap:18px">
+<div class="panel"><h3>Your invoices</h3><div id="sum"></div><div id="list"></div></div>
+<div class="panel"><h3>Your business</h3>
+<div class="grid2">
+<label>Business name<input id="biz"></label>
+<label>GSTIN (optional)<input id="gstin"></label>
+<label class="full">Address<input id="baddr"></label>
+<label>Email<input id="bmail" type="email"></label>
+<label>Phone<input id="bphone" type="tel"></label>
+<label class="full">Logo (optional)<input id="logo" type="file" accept="image/*"></label>
+<button class="btn g full" id="nologo" type="button">Remove logo</button>
+<label class="full">UPI ID for the payment QR code<input id="upi" placeholder="yourname@bank"></label>
+<label class="full">Bank details (optional)<textarea id="bank" rows="3" placeholder="Bank name, account name, account number, IFSC"></textarea></label>
+</div></div>
+<div class="panel"><h3>Client and invoice</h3>
+<div class="grid2">
+<label>Client name<input id="cli"></label>
+<label>Client email<input id="mail" type="email"></label>
+<label class="full">Client address (optional)<input id="caddr"></label>
+<label>Invoice number<input id="num"></label>
+<label>GST<select id="gst"><option value="0">None</option><option value="5">5%</option><option value="12">12%</option><option value="18">18%</option></select></label>
+<label>Due in<select id="due"><option value="7">7 days</option><option value="15">15 days</option><option value="30">30 days</option></select></label>
+<label>Status<select id="st"><option value="draft">Draft</option><option value="sent">Sent</option><option value="viewed">Viewed</option><option value="paid">Paid</option></select></label>
+<label class="full">Payment terms (optional)<textarea id="terms" rows="2" placeholder="Leave empty for the default text"></textarea></label>
+</div>
+<div><div class="mut" style="font-size:13px;margin-bottom:4px">Items: description, quantity, price (₹)</div><div id="items"></div><button class="btn g" id="add">Add item</button></div>
+<div class="tabs" id="tabs" role="group" aria-label="Template"><button data-t="classic">Classic</button><button data-t="bold">Bold</button><button data-t="soft">Soft</button><button data-t="elegant">Elegant</button><button data-t="fresh">Fresh</button></div>
+</div>
+<div class="panel"><h3>Email to client</h3>
+<div class="grid2">
+<label class="full">Message style<select id="mtpl"><option value="friendly">Friendly</option><option value="formal">Formal</option><option value="reminder">Payment reminder</option></select></label>
+<label class="full">Subject<input id="msub"></label>
+<label class="full">Message<textarea id="mbody" rows="6"></textarea></label>
+</div>
+<div class="acts"><button class="btn" id="save">Save invoice</button><button class="btn" id="send">Send to client</button><button class="btn g" id="wa">WhatsApp</button><button class="btn g" id="lnk">Copy link</button><button class="btn g" id="pdf">Download PDF</button><button class="btn d" id="del">Delete</button></div>
+</div>
+</div>
+<div id="paper"></div>
+</div>
+</div>
+<div id="toast" role="status" hidden></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+var $ = function (id) { return document.getElementById(id); };
+var inr = function (n) { return "₹" + Math.round(n).toLocaleString("en-IN"); };
+var num2 = function (n) { return (+n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+var inr2 = function (n) { return "₹" + num2(n); };
+var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+var lat = function (s) { return String(s == null ? "" : s).replace(/[^\x20-\x7E\u00A0-\u00FF\n]/g, "?"); };
+var TH = {
+  classic: { band: "#10233F", bi: "#FFFFFF", rule: "#10233F", box: "#E9EEF6", hd: "#10233F", hi: "#FFFFFF", ac: "#10233F", ai: "#FFFFFF", pf: "helvetica" },
+  bold: { band: "#0B1626", bi: "#FFFFFF", rule: "#FFB627", box: "#EEF1F6", hd: "#0B1626", hi: "#FFFFFF", ac: "#FFB627", ai: "#10233F", pf: "helvetica" },
+  soft: { band: "#FFE3A6", bi: "#10233F", rule: "#0E8F7E", box: "#FFF4DC", hd: "#0E8F7E", hi: "#FFFFFF", ac: "#0E8F7E", ai: "#FFFFFF", pf: "helvetica" },
+  elegant: { band: "#FFFFFF", bi: "#10233F", rule: "#C9A24B", box: "#FAF5E8", hd: "#10233F", hi: "#F5E7BD", ac: "#C9A24B", ai: "#10233F", pf: "times", serif: 1 },
+  fresh: { band: "#0E8F7E", bi: "#FFFFFF", rule: "#0A6E62", box: "#E3F4F0", hd: "#0A6E62", hi: "#FFFFFF", ac: "#0E8F7E", ai: "#FFFFFF", pf: "helvetica" }
+};
+function total(i) {
+  var s = 0; (i.items || []).forEach(function (x) { s += (+x.q || 0) * (+x.p || 0); });
+  var t = s * (+i.gst || 0) / 100; return { s: s, t: t, g: s + t };
+}
+function dstr(ms) { return new Date(ms).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }); }
+function dates(i) { var b = i.created_at ? new Date(i.created_at).getTime() : Date.now(); return { d: dstr(b), due: dstr(b + (+i.due_days || 0) * 86400000) }; }
+function termsOf(i) { var x = i.extra || {}; return (x.terms || "").trim() || ("Payment due within " + (+i.due_days || 0) + " days. Thank you for your business!"); }
+function upiLink(i, S) {
+  var u = String(i.upi || "").trim();
+  if (u.indexOf("@") < 1 || !(S.g > 0)) return "";
+  return "upi://pay?pa=" + encodeURIComponent(u) + "&pn=" + encodeURIComponent(lat(i.business) || "Business") + "&am=" + S.g.toFixed(2) + "&cu=INR&tn=" + encodeURIComponent(i.number || "Invoice");
+}
+function qrOf(text) {
+  if (typeof qrcode === "undefined" || !text) return null;
+  try { var q = qrcode(0, "M"); q.addData(text); q.make(); return q; } catch (e) { return null; }
+}
+function qrSvg(q, px) {
+  var n = q.getModuleCount(), p = "";
+  for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) p += "M" + c + " " + r + "h1v1h-1z";
+  var s = n + 4;
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 ' + s + " " + s + '" width="' + px + '" height="' + px + '" role="img" aria-label="UPI QR code" shape-rendering="crispEdges"><rect x="-2" y="-2" width="' + s + '" height="' + s + '" fill="#fff"/><path d="' + p + '" fill="#000"/></svg>';
+}
+function invHtml(i) {
+  var T = TH[i.template] || TH.classic, x = i.extra || {}, S = total(i), D = dates(i), g = +i.gst || 0;
+  var br = function (a) { return a.filter(function (z) { return z; }).map(esc).join("<br>"); };
+  var logo = x.logo && x.logo.d ? '<span class="lg"><img src="' + esc(x.logo.d) + '" alt="Logo"></span>' : '<span class="nm">' + esc(i.business || "Your business") + "</span>";
+  var st = "--band:" + T.band + ";--bi:" + T.bi + ";--rule:" + T.rule + ";--box:" + T.box + ";--hd:" + T.hd + ";--hi:" + T.hi + ";--ac:" + T.ac + ";--ai:" + T.ai + (T.serif ? ";font-family:Georgia,serif" : "");
+  var rows = (i.items || []).map(function (r) {
+    return "<tr><td>" + esc(r.d || "Item") + "</td><td>" + esc(r.q) + "</td><td>" + num2(r.p) + "</td><td>" + g + "%</td><td>" + num2((+r.q || 0) * (+r.p || 0)) + "</td></tr>";
+  }).join("");
+  var q = qrOf(upiLink(i, S));
+  var pay = q ? '<div class="pay">' + qrSvg(q, 92) + "<div><b>Scan to Pay</b><br>UPI ID: " + esc(i.upi) + "<br>Pay " + inr2(S.g) + " with any UPI app</div></div>" : "";
+  var bank = x.bank && String(x.bank).trim() ? '<p class="nt"><b>BANK DETAILS</b><br>' + esc(x.bank).replace(/\n/g, "<br>") + "</p>" : "";
+  return '<div class="inv" style="' + st + '"><div class="ib">' + logo + '<span class="tt">INVOICE</span></div><div class="ip">' +
+    '<div class="two"><div class="box"><b>FROM</b><strong>' + esc(i.business || "Your business") + "</strong><br>" + br([x.baddr, x.bmail, x.bphone, x.gstin ? "GSTIN: " + x.gstin : ""]) + "</div>" +
+    '<div class="box"><b>BILL TO</b><strong>' + esc(i.client_name || "Client name") + "</strong><br>" + br([x.caddr, i.client_email]) + "</div></div>" +
+    '<dl class="meta"><dt>Invoice #</dt><dd>' + esc(i.number) + "</dd><dt>Date</dt><dd>" + D.d + "</dd><dt>Due date</dt><dd>" + D.due + "</dd></dl>" +
+    '<div class="tw"><table class="it"><thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>GST</th><th>Amount</th></tr></thead><tbody>' + rows + "</tbody></table></div>" +
+    '<dl class="sum2"><dt>Subtotal</dt><dd>' + inr2(S.s) + "</dd>" + (g ? "<dt>GST (" + g + "%)</dt><dd>" + inr2(S.t) + "</dd>" : "") + '</dl><div class="due"><span>TOTAL DUE</span><span>' + inr2(S.g) + "</span></div>" +
+    pay + bank + '<p class="nt"><b>PAYMENT TERMS</b><br>' + esc(termsOf(i)) + "</p></div></div>";
+}
+function invPdf(i) {
+  var J = window.jspdf.jsPDF, d = new J({ unit: "mm", format: "a4" });
+  var T = TH[i.template] || TH.classic, x = i.extra || {}, S = total(i), D = dates(i), g = +i.gst || 0, F = T.pf;
+  var W = 210, M = 14, R = 196, y = 0, TXT = "#10233F", MUT = "#5B6B82", LN = "#D9E2EC";
+  var rgb = function (h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; };
+  var fill = function (h) { var c = rgb(h); d.setFillColor(c[0], c[1], c[2]); };
+  var ink = function (h) { var c = rgb(h); d.setTextColor(c[0], c[1], c[2]); };
+  var pen = function (h) { var c = rgb(h); d.setDrawColor(c[0], c[1], c[2]); };
+  var font = function (st, sz) { d.setFont(F, st); d.setFontSize(sz); };
+  var wrap = function (s, w) { return d.splitTextToSize(lat(s), w); };
+  fill(T.band); d.rect(0, 0, W, 32, "F");
+  fill(T.rule); d.rect(0, 32, W, 1.6, "F");
+  if (x.logo && x.logo.d && x.logo.w && x.logo.h) {
+    try {
+      var lh = Math.min(16, 44 * x.logo.h / x.logo.w), lw = lh * x.logo.w / x.logo.h, ly = (32 - lh - 4) / 2;
+      fill("#FFFFFF"); d.roundedRect(M, ly, lw + 4, lh + 4, 1.5, 1.5, "F");
+      d.addImage(x.logo.d, "PNG", M + 2, ly + 2, lw, lh);
+    } catch (e) {}
+  } else { font("bold", 17); ink(T.bi); d.text(wrap(i.business || "Your business", 100)[0], M, 19); }
+  font("bold", 26); ink(T.bi); d.text("INVOICE", R, 20, { align: "right" });
+  y = 42;
+  font("normal", 9.5);
+  var fromL = [], toL = [];
+  [x.baddr, x.bmail, x.bphone, x.gstin ? "GSTIN: " + x.gstin : ""].forEach(function (s) { if (s) fromL = fromL.concat(wrap(s, 80)); });
+  [x.caddr, i.client_email].forEach(function (s) { if (s) toL = toL.concat(wrap(s, 80)); });
+  var bh = 19 + Math.max(fromL.length, toL.length) * 4.6;
+  [[M, "FROM", i.business || "Your business", fromL], [M + 94, "BILL TO", i.client_name || "Client name", toL]].forEach(function (b) {
+    fill(T.box); d.roundedRect(b[0], y, 88, bh, 2, 2, "F");
+    font("bold", 8); ink(MUT); d.text(b[1], b[0] + 4, y + 6);
+    font("bold", 10.5); ink(TXT); d.text(wrap(b[2], 80)[0], b[0] + 4, y + 11.5);
+    font("normal", 9.5); ink(TXT); b[3].forEach(function (ln, k) { d.text(ln, b[0] + 4, y + 17 + k * 4.6); });
+  });
+  y += bh + 8;
+  pen(LN); d.setLineWidth(0.3); d.line(R - 70, y, R, y);
+  [["Invoice #", i.number], ["Date", D.d], ["Due date", D.due]].forEach(function (m, k) {
+    font("bold", 9.5); ink(TXT); d.text(m[0].toUpperCase(), R - 68, y + 6 + k * 6);
+    font("normal", 9.5); d.text(lat(m[1]), R, y + 6 + k * 6, { align: "right" });
+  });
+  d.line(R - 70, y + 20, R, y + 20);
+  y += 28;
+  var head = function () {
+    fill(T.hd); d.rect(M, y, 182, 8, "F"); font("bold", 9); ink(T.hi);
+    d.text("Description", M + 3, y + 5.4); d.text("Qty", 124, y + 5.4, { align: "right" }); d.text("Rate", 150, y + 5.4, { align: "right" });
+    d.text("GST", 168, y + 5.4, { align: "right" }); d.text("Amount", R - 3, y + 5.4, { align: "right" });
+    y += 8;
+  };
+  head();
+  (i.items || []).forEach(function (r) {
+    font("normal", 9.5);
+    var ls = wrap(r.d || "Item", 90), h = ls.length * 4.6 + 4;
+    if (y + h > 272) { d.addPage(); y = 18; head(); font("normal", 9.5); }
+    ink(TXT);
+    ls.forEach(function (ln, k) { d.text(ln, M + 3, y + 5.6 + k * 4.6); });
+    d.text(String(+r.q || 0), 124, y + 5.6, { align: "right" }); d.text(num2(r.p), 150, y + 5.6, { align: "right" });
+    d.text(g + "%", 168, y + 5.6, { align: "right" }); d.text(num2((+r.q || 0) * (+r.p || 0)), R - 3, y + 5.6, { align: "right" });
+    pen(LN); d.setLineWidth(0.2); d.line(M, y + h, R, y + h);
+    y += h;
+  });
+  if (y > 235) { d.addPage(); y = 18; }
+  y += 6; font("normal", 9.5); ink(TXT);
+  d.text("Subtotal", R - 76, y + 4); d.text(num2(S.s), R - 3, y + 4, { align: "right" }); y += 7;
+  if (g) { d.text("GST (" + g + "%)", R - 76, y + 4); d.text(num2(S.t), R - 3, y + 4, { align: "right" }); y += 7; }
+  fill(T.ac); d.rect(R - 82, y, 82, 11, "F"); font("bold", 10); ink(T.ai);
+  d.text("TOTAL DUE (INR)", R - 79, y + 7.2); d.text(num2(S.g), R - 3, y + 7.2, { align: "right" });
+  y += 20;
+  var q = qrOf(upiLink(i, S));
+  if (q) {
+    if (y > 245) { d.addPage(); y = 18; }
+    var n = q.getModuleCount(), cell = 28 / n;
+    fill("#000000");
+    for (var rr = 0; rr < n; rr++) for (var cc = 0; cc < n; cc++) if (q.isDark(rr, cc)) d.rect(M + 2 + cc * cell, y + 2 + rr * cell, cell + 0.02, cell + 0.02, "F");
+    font("bold", 10.5); ink(TXT); d.text("Scan to Pay", M + 38, y + 10);
+    font("normal", 9.5); d.text("UPI ID: " + lat(i.upi), M + 38, y + 16); d.text("Pay Rs. " + num2(S.g) + " with any UPI app", M + 38, y + 21.5);
+    y += 36;
+  }
+  var note = function (title, text) {
+    font("normal", 9.5);
+    var ls = wrap(text, 182), h = 12 + ls.length * 4.6;
+    if (y + h > 285) { d.addPage(); y = 18; font("normal", 9.5); }
+    font("bold", 8.5); ink(MUT); d.text(title, M, y + 4);
+    font("normal", 9.5); ink(TXT); ls.forEach(function (ln, k) { d.text(ln, M, y + 10 + k * 4.6); });
+    y += h;
+  };
+  if (x.bank && String(x.bank).trim()) note("BANK DETAILS", x.bank);
+  note("PAYMENT TERMS", termsOf(i));
+  return d;
+}
+// 1. Supabase values (Project Settings > API).
+var SUPABASE_URL = "https://omzebtgnqvxqmfvowywz.supabase.co";
+var SUPABASE_KEY = "sb_publishable_dNmjuL7oIyYJzOSSG6XsNg_gAj0ewoE";
+var SITE_URL = "https://linvoice-hub-web.vercel.app";
+var sb = null, cur = null, lst = [], saveMsg = "";
+
+function toast(m) {
+  var t = $("toast"); t.textContent = m; t.hidden = false;
+  clearTimeout(toast.h); toast.h = setTimeout(function () { t.hidden = true; }, 4000);
+}
+function dflt() { try { return JSON.parse(localStorage.getItem("ih_defaults") || "{}"); } catch (e) { return {}; } }
+function remember() {
+  try {
+    var e = cur.extra || {};
+    localStorage.setItem("ih_defaults", JSON.stringify({ business: cur.business, upi: cur.upi,
+      extra: { baddr: e.baddr, bmail: e.bmail, bphone: e.bphone, gstin: e.gstin, bank: e.bank, terms: e.terms, logo: e.logo } }));
+  } catch (e2) {}
+}
+function blank() {
+  var D = dflt();
+  return { id: null, number: "INV-" + String(Date.now()).slice(-5), business: D.business || "", upi: D.upi || "", client_name: "", client_email: "",
+    template: "classic", gst: 18, due_days: 15, items: [{ d: "", q: 1, p: 0 }], status: "draft", extra: JSON.parse(JSON.stringify(D.extra || {})) };
+}
+
+/* ---------- auth ---------- */
+function show(session) {
+  $("auth").hidden = !!session; $("app").hidden = !session;
+  if (session) { loadList(); if (!cur) edit(blank()); }
+}
+function msg(m) { $("err").textContent = m || ""; }
+function authInput() { return { email: $("em").value.trim(), password: $("pw").value }; }
+$("authForm").addEventListener("submit", function (e) {
+  e.preventDefault(); msg("");
+  sb.auth.signInWithPassword(authInput()).then(function (r) { if (r.error) msg(r.error.message); });
+});
+$("signup").addEventListener("click", function () {
+  msg("");
+  var a = authInput();
+  if (!a.email || a.password.length < 6) { msg("Enter an email and a password of at least 6 characters."); return; }
+  sb.auth.signUp(a).then(function (r) {
+    if (r.error) { msg(r.error.message); return; }
+    if (!r.data.session) msg("Account created. Check your email to confirm it, then sign in.");
+  });
+});
+$("out").addEventListener("click", function () { cur = null; sb.auth.signOut(); });
+
+/* ---------- list ---------- */
+function summary() {
+  var o = 0, p = 0;
+  lst.forEach(function (i) { var g = total(i).g; if (i.status === "paid") p += g; else o += g; });
+  $("sum").innerHTML = "<div>Outstanding<b>" + inr(o) + "</b></div><div>Paid<b>" + inr(p) + "</b></div>";
+}
+function loadList() {
+  sb.from("invoices").select("*").order("created_at", { ascending: false }).then(function (r) {
+    if (r.error) { toast(r.error.message); return; }
+    lst = r.data || []; summary();
+    $("list").innerHTML = lst.length ? lst.map(function (i) {
+      return '<button class="row" data-id="' + i.id + '"><b>' + esc(i.number) + "</b><span>" + esc(i.client_name || "No client") + " · " + esc(i.status || "draft") + "</span><em>" + inr(total(i).g) + "</em></button>";
+    }).join("") : '<p class="mut" style="margin:0">No saved invoices yet. Fill in the form and save your first one.</p>';
+  });
+}
+$("list").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-id]"); if (!b) return;
+  var f = lst.filter(function (x) { return x.id === b.dataset.id; })[0];
+  if (f) edit(JSON.parse(JSON.stringify(f)));
+});
+$("new").addEventListener("click", function () { edit(blank()); });
+
+/* ---------- editor ---------- */
+var map = { biz: "business", num: "number", cli: "client_name", mail: "client_email", gst: "gst", due: "due_days", st: "status", upi: "upi" };
+var xmap = ["baddr", "bmail", "bphone", "gstin", "caddr", "bank", "terms"];
+function edit(i) {
+  cur = i; if (!cur.extra) cur.extra = {};
+  Object.keys(map).forEach(function (k) { $(k).value = i[map[k]] == null ? "" : i[map[k]]; });
+  xmap.forEach(function (k) { $(k).value = cur.extra[k] || ""; });
+  rows(); tpl(i.template); prev(); fillMsg();
+}
+Object.keys(map).forEach(function (k) {
+  $(k).addEventListener("input", function () {
+    var v = $(k).value; cur[map[k]] = (k === "gst" || k === "due") ? +v : v; prev();
+  });
+});
+xmap.forEach(function (k) {
+  $(k).addEventListener("input", function () { cur.extra[k] = $(k).value; prev(); });
+});
+$("logo").addEventListener("change", function (e) {
+  var f = e.target.files[0]; if (!f) return;
+  var rd = new FileReader();
+  rd.onload = function () {
+    var im = new Image();
+    im.onload = function () {
+      var s = Math.min(1, 300 / im.width), w = Math.max(1, Math.round(im.width * s)), h = Math.max(1, Math.round(im.height * s));
+      var c = document.createElement("canvas"); c.width = w; c.height = h;
+      c.getContext("2d").drawImage(im, 0, 0, w, h);
+      cur.extra.logo = { d: c.toDataURL("image/png"), w: w, h: h }; prev(); toast("Logo added");
+    };
+    im.onerror = function () { toast("That image could not be read."); };
+    im.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+});
+$("nologo").addEventListener("click", function () { delete cur.extra.logo; $("logo").value = ""; prev(); toast("Logo removed"); });
+function rows() {
+  $("items").innerHTML = cur.items.map(function (x, k) {
+    return '<div class="ir"><input data-k="' + k + '" data-f="d" placeholder="Description" value="' + esc(x.d) + '">' +
+      '<input data-k="' + k + '" data-f="q" type="number" min="0" value="' + esc(x.q) + '">' +
+      '<input data-k="' + k + '" data-f="p" type="number" min="0" value="' + esc(x.p) + '">' +
+      '<button data-del="' + k + '" aria-label="Remove item">×</button></div>';
+  }).join("");
+}
+$("items").addEventListener("input", function (e) {
+  var t = e.target; if (!t.dataset.f) return;
+  cur.items[+t.dataset.k][t.dataset.f] = t.dataset.f === "d" ? t.value : (+t.value || 0); prev();
+});
+$("items").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-del]"); if (!b) return;
+  cur.items.splice(+b.dataset.del, 1); if (!cur.items.length) cur.items.push({ d: "", q: 1, p: 0 });
+  rows(); prev();
+});
+$("add").addEventListener("click", function () { cur.items.push({ d: "", q: 1, p: 0 }); rows(); prev(); });
+function tpl(t) {
+  cur.template = t;
+  document.querySelectorAll("#tabs button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.t === t)); });
+}
+$("tabs").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-t]"); if (b) { tpl(b.dataset.t); prev(); }
+});
+function prev() { $("paper").innerHTML = invHtml(cur); }
+
+/* ---------- save / delete ---------- */
+function rowOf() {
+  return { number: cur.number, business: cur.business, client_name: cur.client_name, client_email: cur.client_email,
+    template: cur.template, gst: cur.gst, due_days: cur.due_days, items: cur.items, status: cur.status, upi: cur.upi || null, extra: cur.extra || {} };
+}
+$("save").addEventListener("click", function () {
+  var row = rowOf();
+  var q = cur.id ? sb.from("invoices").update(row).eq("id", cur.id).select().single() : sb.from("invoices").insert(row).select().single();
+  q.then(function (r) {
+    if (r.error) { toast("Could not save: " + r.error.message); return; }
+    cur.id = r.data.id; cur.created_at = r.data.created_at; remember(); toast(saveMsg || "Invoice saved"); saveMsg = ""; loadList(); prev();
+  });
+});
+async function ensureSaved() {
+  if (cur.id) return;
+  var r = await sb.from("invoices").insert(rowOf()).select().single();
+  if (r.error) throw new Error("Could not save: " + r.error.message);
+  cur.id = r.data.id; cur.created_at = r.data.created_at; remember(); loadList(); prev();
+}
+$("del").addEventListener("click", function () {
+  if (!cur.id) { edit(blank()); return; }
+  if (!confirm("Delete this invoice? This cannot be undone.")) return;
+  sb.from("invoices").delete().eq("id", cur.id).then(function (r) {
+    if (r.error) { toast("Could not delete: " + r.error.message); return; }
+    toast("Invoice deleted"); edit(blank()); loadList();
+  });
+});
+
+/* ---------- pdf, share, email ---------- */
+function link() { return SITE_URL + "/view.html?id=" + cur.id; }
+function pdfReady() { if (typeof window.jspdf === "undefined") throw new Error("PDF tool did not load. Refresh and try again."); }
+$("pdf").addEventListener("click", function () {
+  try { pdfReady(); invPdf(cur).save(cur.number + ".pdf"); } catch (e) { toast("Could not create the PDF: " + (e.message || e)); }
+});
+$("wa").addEventListener("click", async function () {
+  try {
+    if (!cur.id) { await ensureSaved(); toast("Saved. Tap WhatsApp again to share."); return; }
+    var t = "Hi " + (cur.client_name || "there") + ", here is invoice " + cur.number + (cur.business ? " from " + cur.business : "") + " for " + inr2(total(cur).g) + ", due in " + cur.due_days + " days. View or pay online: " + link();
+    window.open("https://wa.me/?text=" + encodeURIComponent(t), "_blank");
+  } catch (e) { toast(e.message || "Could not open WhatsApp."); }
+});
+$("lnk").addEventListener("click", async function () {
+  try {
+    await ensureSaved();
+    if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(link()); toast("Link copied"); }
+    else { prompt("Copy this link:", link()); }
+  } catch (e) { toast(e.message || "Could not copy the link."); }
+});
+function fillMsg() {
+  var i = cur, who = i.client_name || "there", biz = i.business || "", amt = inr2(total(i).g), k = $("mtpl").value, s, b;
+  if (k === "formal") {
+    s = "Invoice " + i.number + (biz ? " from " + biz : "");
+    b = "Dear " + who + ",\n\nPlease find attached invoice " + i.number + " for " + amt + ", payable within " + i.due_days + " days.\n\nRegards,\n" + biz;
+  } else if (k === "reminder") {
+    s = "Reminder: invoice " + i.number + " is due";
+    b = "Hi " + who + ",\n\nA gentle reminder that invoice " + i.number + " for " + amt + " is due. The invoice is attached again for your convenience.\n\nPlease let me know if you have any questions.\n\nThanks,\n" + biz;
+  } else {
+    s = "Invoice " + i.number + (biz ? " from " + biz : "");
+    b = "Hi " + who + ",\n\nThank you for your business! Please find invoice " + i.number + " attached. The total is " + amt + ", due within " + i.due_days + " days.\n\nThanks,\n" + biz;
+  }
+  $("msub").value = s; $("mbody").value = b;
+}
+$("mtpl").addEventListener("change", fillMsg);
+$("send").addEventListener("click", async function () {
+  var to = (cur.client_email || "").trim();
+  if (!/^\S+@\S+\.\S+$/.test(to)) { toast("Enter a valid client email first."); $("mail").focus(); return; }
+  var btn = $("send"); btn.disabled = true; btn.textContent = "Sending...";
+  try {
+    pdfReady();
+    await ensureSaved();
+    var s = await sb.auth.getSession();
+    if (!s.data.session) throw new Error("Please sign in again.");
+    var b64 = invPdf(cur).output("datauristring").split("base64,")[1];
+    if (!b64 || b64.length > 3500000) throw new Error("The PDF is too large to email. Use a smaller logo and try again.");
+    var r = await fetch("/api/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + s.data.session.access_token },
+      body: JSON.stringify({ to: to, subject: $("msub").value, message: $("mbody").value + "\n\nView or pay online: " + link(), fromName: cur.business, filename: cur.number + ".pdf", pdf: b64 })
+    });
+    var d = await r.json().catch(function () { return {}; });
+    if (!r.ok) throw new Error(d.error || "Could not send the email.");
+    cur.status = "sent"; $("st").value = "sent";
+    saveMsg = "Invoice emailed to " + to + " and saved"; $("save").click();
+  } catch (e) { toast(e.message || "Could not send the email."); }
+  btn.disabled = false; btn.textContent = "Send to client";
+});
+
+/* ---------- start ---------- */
+if (SUPABASE_URL.indexOf("PASTE") === 0 || typeof supabase === "undefined") {
+  $("auth").hidden = false;
+  $("authForm").innerHTML = '<div class="logo"><i></i>InvoiceHub</div><h1 style="font-size:22px">Almost ready</h1><p class="mut">Could not load the sign-in service. Check your internet and refresh.</p>';
+} else {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  sb.auth.getSession().then(function (r) { show(r.data.session); });
+  sb.auth.onAuthStateChange(function (_e, s) { show(s); });
+}
+</script>
+</body>
+</html>
