@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F766E">
+<title>Invoice | InvoiceHub</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Noto+Sans+Telugu:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F6FB;--sf:#fff;--sf2:#F7F9FC;--ink:#0E1B33;--mut:#64748B;--line:#E3E9F2;--pri:#0F766E;--pri2:#14B8A6;--gold:#F59E0B;--coral:#E5484D;--sky:#2F7DE1;--grn:#12A150;--sh:0 1px 2px rgba(14,27,51,.05),0 10px 28px -14px rgba(14,27,51,.22);--r:18px;color-scheme:light}
+[data-theme=dark]{--bg:#0A101C;--sf:#111A2C;--sf2:#16223A;--ink:#E8EEF8;--mut:#94A3B8;--line:#22304A;--sh:0 1px 2px rgba(0,0,0,.3),0 14px 32px -16px rgba(0,0,0,.65);color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 "DM Sans","Noto Sans Telugu","Noto Sans Devanagari",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Bricolage Grotesque","Noto Sans Telugu","Noto Sans Devanagari","DM Sans",sans-serif;margin:0;letter-spacing:-.02em;line-height:1.15}
+h1{font-size:clamp(24px,5vw,32px);font-weight:800}h2{font-size:clamp(20px,4vw,26px);font-weight:800}h3{font-size:17px;font-weight:700}
+p{margin:0}a{color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.mut{color:var(--mut)}small{font-size:13px}
+.logo{font:800 21px "Bricolage Grotesque","Noto Sans Telugu","Noto Sans Devanagari",sans-serif;display:flex;align-items:center;gap:9px;text-decoration:none}
+.logo i{width:28px;height:28px;border-radius:9px 9px 9px 3px;background:linear-gradient(135deg,var(--pri),var(--pri2));display:inline-block;position:relative}
+.logo i::after{content:"";position:absolute;left:7px;top:8px;width:14px;height:3px;background:#fff;border-radius:2px;box-shadow:0 5px 0 #fff,0 10px 0 var(--gold)}
+button,input,select,textarea{font:inherit;color:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 18px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--pri),#0E9F8E);color:#fff;box-shadow:0 8px 18px -10px var(--pri);transition:transform .15s,box-shadow .2s,opacity .2s;text-decoration:none;white-space:nowrap}
+.btn:hover{box-shadow:0 12px 22px -10px var(--pri)}.btn:active{transform:scale(.97)}
+.btn.g{background:var(--sf);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.d{background:var(--sf);color:var(--coral);border:1px solid var(--line);box-shadow:none}
+.btn.sm{padding:9px 14px;font-size:14px;border-radius:12px}
+.btn:disabled{opacity:.55;cursor:wait}
+#toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-size:14px;font-weight:500;z-index:60;max-width:92vw;text-align:center;box-shadow:var(--sh);animation:up .25s}
+@keyframes up{from{opacity:0;transform:translate(-50%,10px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.inv{--band:#10233F;--bi:#fff;--rule:#10233F;--box:#E9EEF6;--hd:#10233F;--hi:#fff;--ac:#10233F;--ai:#fff;background:#fff;color:#10233F;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ib{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 20px;background:var(--band);color:var(--bi);border-bottom:4px solid var(--rule)}
+.ib .lg{background:#fff;border-radius:8px;padding:5px;display:flex}.ib .lg img{max-height:44px;max-width:150px;display:block}
+.ib .nm{font:800 19px "Bricolage Grotesque","Noto Sans Telugu","Noto Sans Devanagari",sans-serif;overflow-wrap:anywhere}
+.ib .tt{font:800 clamp(22px,6vw,32px) "Bricolage Grotesque","Noto Sans Telugu","Noto Sans Devanagari",sans-serif;letter-spacing:.05em}
+.ip{padding:18px 20px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box{background:var(--box);border-radius:8px;padding:11px 12px;font-size:13px;line-height:1.55;overflow-wrap:anywhere}
+.box b{display:block;font-size:11px;letter-spacing:.07em;color:#5B6B82;margin-bottom:2px}
+.meta{display:grid;grid-template-columns:auto auto;gap:3px 18px;justify-content:end;margin:16px 0 0;font-size:13px}
+.meta dt{color:#5B6B82}.meta dd{margin:0;font-weight:700;text-align:right}
+.tw{overflow-x:auto;margin-top:14px}
+.it{width:100%;border-collapse:collapse;font-size:13px}
+.it th{background:var(--hd);color:var(--hi);padding:8px;text-align:right;font-weight:700;white-space:nowrap}
+.it td{padding:8px;border-bottom:1px solid #D9E2EC;text-align:right;white-space:nowrap}
+.it th:first-child,.it td:first-child{text-align:left;white-space:normal;overflow-wrap:break-word;word-break:normal;min-width:96px}
+.sum2{display:grid;grid-template-columns:auto auto;gap:4px 24px;justify-content:end;margin:12px 0 8px;font-size:14px}
+.sum2 dd{margin:0;text-align:right}
+.due{display:flex;justify-content:space-between;gap:16px;background:var(--ac);color:var(--ai);border-radius:6px;padding:11px 14px;font-weight:800;margin-left:auto;max-width:340px}
+.pay{display:flex;gap:14px;align-items:center;margin-top:18px;font-size:13px}
+.nt{font-size:13px;margin:16px 0 0;overflow-wrap:anywhere}.nt b{font-size:11px;letter-spacing:.07em;color:#5B6B82}
+@media(max-width:480px){.ip{padding:14px 12px}.ib{padding:14px 14px}.it{font-size:12px}.it th,.it td{padding:7px 4px}.box{font-size:12px;padding:10px}.due{padding:10px 12px}}
+.hs{color:#5B6B82;font-size:11px}.stampr{text-align:right;margin:10px 0 0}.stamp{display:inline-block;border:3px solid #12A150;color:#12A150;font:800 20px "Bricolage Grotesque","Noto Sans Telugu","Noto Sans Devanagari",sans-serif;letter-spacing:.12em;padding:2px 14px;border-radius:8px;transform:rotate(-6deg)}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:16px}
+.vt{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px}
+.vb{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+</style>
+</head>
+<body>
+<header class="vt"><div class="logo"><i></i>InvoiceHub</div></header>
+<div style="max-width:820px;margin:0 auto;padding:4px 16px 40px"><div class="vb"><a class="btn" id="pay2" hidden>Pay online</a><a class="btn g" id="pay" hidden>Pay with UPI</a><button class="btn g" id="pdf" hidden>Download PDF</button></div><div id="paper"><p class="mut">Loading invoice...</p></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+var $ = function (id) { return document.getElementById(id); };
+var inr = function (n) { return "₹" + Math.round(n).toLocaleString("en-IN"); };
+var num2 = function (n) { return (+n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+var inr2 = function (n) { return "₹" + num2(n); };
+var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+var lat = function (s) { return String(s == null ? "" : s).replace(/[^\x20-\x7E\u00A0-\u00FF\n]/g, "?"); };
+var TH = {
+  classic: { band: "#10233F", bi: "#FFFFFF", rule: "#10233F", box: "#E9EEF6", hd: "#10233F", hi: "#FFFFFF", ac: "#10233F", ai: "#FFFFFF", pf: "helvetica" },
+  bold: { band: "#0B1626", bi: "#FFFFFF", rule: "#FFB627", box: "#EEF1F6", hd: "#0B1626", hi: "#FFFFFF", ac: "#FFB627", ai: "#10233F", pf: "helvetica" },
+  soft: { band: "#FFE3A6", bi: "#10233F", rule: "#0E8F7E", box: "#FFF4DC", hd: "#0E8F7E", hi: "#FFFFFF", ac: "#0E8F7E", ai: "#FFFFFF", pf: "helvetica" },
+  elegant: { band: "#FFFFFF", bi: "#10233F", rule: "#C9A24B", box: "#FAF5E8", hd: "#10233F", hi: "#F5E7BD", ac: "#C9A24B", ai: "#10233F", pf: "times", serif: 1 },
+  fresh: { band: "#0E8F7E", bi: "#FFFFFF", rule: "#0A6E62", box: "#E3F4F0", hd: "#0A6E62", hi: "#FFFFFF", ac: "#0E8F7E", ai: "#FFFFFF", pf: "helvetica" }
+};
+var LB = {
+  en: { inv: "INVOICE", quo: "QUOTATION", from: "FROM", to: "BILL TO", invno: "Invoice #", quono: "Quote #", date: "Date", due: "Due date", valid: "Valid until", pos: "Place of supply", sup: "Supply", desc: "Description", qty: "Qty", rate: "Rate", gst: "GST", amt: "Amount", sub: "Subtotal", paid: "Paid", totdue: "TOTAL DUE", baldue: "BALANCE DUE", total: "TOTAL", scan: "Scan to Pay", upi: "UPI ID", payvia: "Pay {a} with any UPI app", bank: "BANK DETAILS", pterms: "PAYMENT TERMS", terms: "TERMS", stamp: "PAID", hsn: "HSN/SAC", item: "Item" },
+  te: { inv: "ఇన్వాయిస్", quo: "కొటేషన్", from: "పంపినవారు", to: "బిల్ చేయవలసినవారు", invno: "ఇన్వాయిస్ సంఖ్య", quono: "కొటేషన్ సంఖ్య", date: "తేదీ", due: "చెల్లింపు గడువు", valid: "చెల్లుబాటు తేదీ", pos: "సరఫరా స్థలం", sup: "సరఫరా", desc: "వివరణ", qty: "పరిమాణం", rate: "రేటు", gst: "GST", amt: "మొత్తం", sub: "ఉప మొత్తం", paid: "చెల్లించినది", totdue: "చెల్లించవలసిన మొత్తం", baldue: "మిగిలిన బాకీ", total: "మొత్తం", scan: "చెల్లించడానికి స్కాన్ చేయండి", upi: "UPI ఐడి", payvia: "ఏదైనా UPI యాప్‌తో {a} చెల్లించండి", bank: "బ్యాంక్ వివరాలు", pterms: "చెల్లింపు నిబంధనలు", terms: "నిబంధనలు", stamp: "చెల్లించబడింది", hsn: "HSN/SAC", item: "వస్తువు" },
+  hi: { inv: "चालान", quo: "कोटेशन", from: "प्रेषक", to: "बिल प्राप्तकर्ता", invno: "चालान संख्या", quono: "कोटेशन संख्या", date: "दिनांक", due: "देय तिथि", valid: "वैध तिथि तक", pos: "आपूर्ति का स्थान", sup: "आपूर्ति", desc: "विवरण", qty: "मात्रा", rate: "दर", gst: "GST", amt: "राशि", sub: "उप-योग", paid: "भुगतान किया", totdue: "कुल देय राशि", baldue: "शेष राशि", total: "कुल", scan: "भुगतान के लिए स्कैन करें", upi: "UPI आईडी", payvia: "किसी भी UPI ऐप से {a} का भुगतान करें", bank: "बैंक विवरण", pterms: "भुगतान की शर्तें", terms: "शर्तें", stamp: "भुगतान हो गया", hsn: "HSN/SAC", item: "वस्तु" }
+};
+function L(i, k) { var g = (i.extra && i.extra.lang) || "en", t = LB[g] || LB.en; return t[k] != null ? t[k] : LB.en[k]; }
+var STATES = [["01","Jammu & Kashmir"],["02","Himachal Pradesh"],["03","Punjab"],["04","Chandigarh"],["05","Uttarakhand"],["06","Haryana"],["07","Delhi"],["08","Rajasthan"],["09","Uttar Pradesh"],["10","Bihar"],["11","Sikkim"],["12","Arunachal Pradesh"],["13","Nagaland"],["14","Manipur"],["15","Mizoram"],["16","Tripura"],["17","Meghalaya"],["18","Assam"],["19","West Bengal"],["20","Jharkhand"],["21","Odisha"],["22","Chhattisgarh"],["23","Madhya Pradesh"],["24","Gujarat"],["26","Dadra & Nagar Haveli and Daman & Diu"],["27","Maharashtra"],["29","Karnataka"],["30","Goa"],["31","Lakshadweep"],["32","Kerala"],["33","Tamil Nadu"],["34","Puducherry"],["35","Andaman & Nicobar"],["36","Telangana"],["37","Andhra Pradesh"],["38","Ladakh"]];
+function stName(c) { for (var k = 0; k < STATES.length; k++) if (STATES[k][0] === c) return STATES[k][1] + " (" + c + ")"; return c || ""; }
+function ex(i) { return i.extra || {}; }
+function docOf(i) { return ex(i).doc === "quote" ? "quote" : "invoice"; }
+function paysOf(i) { var p = ex(i).payments; return Array.isArray(p) ? p : []; }
+function total(i) {
+  var s = 0; (i.items || []).forEach(function (x) { s += (+x.q || 0) * (+x.p || 0); });
+  var gp = +i.gst || 0, t = s * gp / 100, x = ex(i), g = s + t;
+  var mode = gp > 0 ? ((x.pos && x.bstate && x.pos !== x.bstate) ? "igst" : "gst") : "none";
+  var paid = 0; paysOf(i).forEach(function (p) { paid += +p.a || 0; });
+  if (i.status === "paid" && paid < g) paid = g;
+  return { s: s, t: t, g: g, mode: mode, cg: mode === "gst" ? t / 2 : 0, sg: mode === "gst" ? t / 2 : 0, ig: mode === "igst" ? t : 0, paid: paid, bal: Math.max(0, g - paid) };
+}
+function payLink(i) {
+  var pl = i.extra && i.extra.paylink; if (!pl || !pl.url) return "";
+  var T = total(i); return (T.bal > 0.005 && Math.abs((+pl.amount || 0) - T.bal) < 0.01) ? pl.url : "";
+}
+function dstr(ms) { return new Date(ms).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }); }
+function dates(i) { var b = i.created_at ? new Date(i.created_at).getTime() : Date.now(); return { d: dstr(b), due: dstr(b + (+i.due_days || 0) * 86400000) }; }
+function termsOf(i) {
+  var x = i.extra || {}, t = (x.terms || "").trim(), n = +i.due_days || 0, g = x.lang || "en", q = docOf(i) === "quote";
+  if (t) return t;
+  if (g === "te") return q ? "ఈ కొటేషన్ " + n + " రోజులు చెల్లుబాటులో ఉంటుంది." : "చెల్లింపు " + n + " రోజుల్లో చేయాలి. మీ వ్యాపారానికి ధన్యవాదాలు!";
+  if (g === "hi") return q ? "यह कोटेशन " + n + " दिनों के लिए वैध है।" : "भुगतान " + n + " दिनों के भीतर देय है। आपके व्यवसाय के लिए धन्यवाद!";
+  return q ? "This quotation is valid for " + n + " days." : "Payment due within " + n + " days. Thank you for your business!";
+}
+function upiLink(i, S) {
+  var u = String(i.upi || "").trim(), amt = S.paid > 0 ? S.bal : S.g;
+  if (docOf(i) === "quote" || u.indexOf("@") < 1 || !(amt > 0)) return "";
+  return "upi://pay?pa=" + encodeURIComponent(u) + "&pn=" + encodeURIComponent(lat(i.business) || "Business") + "&am=" + amt.toFixed(2) + "&cu=INR&tn=" + encodeURIComponent(i.number || "Invoice");
+}
+function qrOf(text) {
+  if (typeof qrcode === "undefined" || !text) return null;
+  try { var q = qrcode(0, "M"); q.addData(text); q.make(); return q; } catch (e) { return null; }
+}
+function qrSvg(q, px) {
+  var n = q.getModuleCount(), p = "";
+  for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) p += "M" + c + " " + r + "h1v1h-1z";
+  var s = n + 4;
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 ' + s + " " + s + '" width="' + px + '" height="' + px + '" role="img" aria-label="UPI QR code" shape-rendering="crispEdges"><rect x="-2" y="-2" width="' + s + '" height="' + s + '" fill="#fff"/><path d="' + p + '" fill="#000"/></svg>';
+}
+function invHtml(i) {
+  var T = TH[i.template] || TH.classic, x = i.extra || {}, S = total(i), D = dates(i), g = +i.gst || 0, q = docOf(i) === "quote", Lb = function (k) { return L(i, k); };
+  var br = function (a) { return a.filter(function (z) { return z; }).map(esc).join("<br>"); };
+  var logo = x.logo && x.logo.d ? '<span class="lg"><img src="' + esc(x.logo.d) + '" alt="Logo"></span>' : '<span class="nm">' + esc(i.business || "Your business") + "</span>";
+  var st = "--band:" + T.band + ";--bi:" + T.bi + ";--rule:" + T.rule + ";--box:" + T.box + ";--hd:" + T.hd + ";--hi:" + T.hi + ";--ac:" + T.ac + ";--ai:" + T.ai + (T.serif && (x.lang || "en") === "en" ? ";font-family:Georgia,serif" : "");
+  var rows = (i.items || []).map(function (r) {
+    return "<tr><td>" + esc(r.d || Lb("item")) + (r.h ? '<br><small class="hs">' + Lb("hsn") + " " + esc(r.h) + "</small>" : "") + "</td><td>" + esc(r.q) + "</td><td>" + num2(r.p) + "</td><td>" + g + "%</td><td>" + num2((+r.q || 0) * (+r.p || 0)) + "</td></tr>";
+  }).join("");
+  var tax = !g ? "" : S.mode === "igst" ? "<dt>IGST (" + g + "%)</dt><dd>" + inr2(S.ig) + "</dd>" : "<dt>CGST (" + g / 2 + "%)</dt><dd>" + inr2(S.cg) + "</dd><dt>SGST (" + g / 2 + "%)</dt><dd>" + inr2(S.sg) + "</dd>";
+  var pr = !q && S.paid > 0 ? "<dt>" + Lb("paid") + "</dt><dd>- " + inr2(S.paid) + "</dd>" : "";
+  var amt = q ? S.g : (S.paid > 0 ? S.bal : S.g), lbl = q ? Lb("total") : (S.paid > 0 ? Lb("baldue") : Lb("totdue"));
+  var stamp = !q && S.paid > 0 && S.bal <= 0.005 ? '<div class="stampr"><span class="stamp">' + Lb("stamp") + "</span></div>" : "";
+  var qr = qrOf(upiLink(i, S));
+  var pay = qr ? '<div class="pay">' + qrSvg(qr, 92) + "<div><b>" + Lb("scan") + "</b><br>" + Lb("upi") + ": " + esc(i.upi) + "<br>" + esc(Lb("payvia").replace("{a}", inr2(amt))) + "</div></div>" : "";
+  var bank = x.bank && String(x.bank).trim() ? '<p class="nt"><b>' + Lb("bank") + "</b><br>" + esc(x.bank).replace(/\n/g, "<br>") + "</p>" : "";
+  var pos = x.pos ? "<dt>" + Lb("pos") + "</dt><dd>" + esc(stName(x.pos)) + "</dd>" : "";
+  return '<div class="inv" style="' + st + '"><div class="ib">' + logo + '<span class="tt">' + (q ? Lb("quo") : Lb("inv")) + '</span></div><div class="ip">' +
+    '<div class="two"><div class="box"><b>' + Lb("from") + "</b><strong>" + esc(i.business || "Your business") + "</strong><br>" + br([x.baddr, x.bmail, x.bphone, x.gstin ? "GSTIN: " + x.gstin : ""]) + "</div>" +
+    '<div class="box"><b>' + Lb("to") + "</b><strong>" + esc(i.client_name || "Client name") + "</strong><br>" + br([x.caddr, i.client_email, x.cgstin ? "GSTIN: " + x.cgstin : ""]) + "</div></div>" +
+    '<dl class="meta"><dt>' + (q ? Lb("quono") : Lb("invno")) + "</dt><dd>" + esc(i.number) + "</dd><dt>" + Lb("date") + "</dt><dd>" + D.d + "</dd><dt>" + (q ? Lb("valid") : Lb("due")) + "</dt><dd>" + D.due + "</dd>" + pos + "</dl>" +
+    '<div class="tw"><table class="it"><thead><tr><th>' + Lb("desc") + "</th><th>" + Lb("qty") + "</th><th>" + Lb("rate") + "</th><th>" + Lb("gst") + "</th><th>" + Lb("amt") + "</th></tr></thead><tbody>" + rows + "</tbody></table></div>" +
+    '<dl class="sum2"><dt>' + Lb("sub") + "</dt><dd>" + inr2(S.s) + "</dd>" + tax + pr + '</dl><div class="due"><span>' + lbl + "</span><span>" + inr2(amt) + "</span></div>" + stamp +
+    pay + bank + '<p class="nt"><b>' + (q ? Lb("terms") : Lb("pterms")) + "</b><br>" + esc(termsOf(i)) + "</p></div></div>";
+}
+function invPdf(i) {
+  var J = window.jspdf.jsPDF, d = new J({ unit: "mm", format: "a4" });
+  var T = TH[i.template] || TH.classic, x = i.extra || {}, S = total(i), D = dates(i), g = +i.gst || 0, F = T.pf, q = docOf(i) === "quote", Lb = function (k) { return L(i, k); };
+  var W = 210, M = 14, R = 196, y = 0, TXT = "#10233F", MUT = "#5B6B82", LN = "#D9E2EC";
+  var canR = typeof document !== "undefined" && !!document.createElement, PX = 5, MM = 0.3528, st = { pt: 9.5, bold: false, col: TXT };
+  var cv = canR ? document.createElement("canvas") : null, cx = cv ? cv.getContext("2d") : null;
+  var needsR = function (s) { return canR && !!cx && /[^\x00-\xFF]/.test(s); };
+  var setF = function () { cx.font = (st.bold ? "700 " : "400 ") + (st.pt * PX) + 'px "Noto Sans Telugu","Noto Sans Devanagari","DM Sans",Arial,sans-serif'; };
+  var mw = function (s) { setF(); return cx.measureText(s).width / PX * MM; };
+  var rgb = function (h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; };
+  var fill = function (h) { var c = rgb(h); d.setFillColor(c[0], c[1], c[2]); };
+  var ink = function (h) { var c = rgb(h); d.setTextColor(c[0], c[1], c[2]); st.col = h; };
+  var pen = function (h) { var c = rgb(h); d.setDrawColor(c[0], c[1], c[2]); };
+  var font = function (sty, sz) { d.setFont(F, sty); d.setFontSize(sz); st.pt = sz; st.bold = sty === "bold"; };
+  var rtext = function (s, x0, y0, o) {
+    setF(); var w = cx.measureText(s).width, wpx = Math.ceil(w) + 4, hpx = Math.ceil(st.pt * PX * 1.5);
+    cv.width = wpx; cv.height = hpx; setF(); cx.fillStyle = st.col; cx.textBaseline = "alphabetic"; cx.fillText(s, 2, st.pt * PX * 1.1);
+    var left = (o && o.align === "right") ? x0 - (w + 2) / PX * MM : x0 - 2 / PX * MM;
+    d.addImage(cv.toDataURL("image/png"), "PNG", left, y0 - 1.1 * st.pt * MM, wpx / PX * MM, hpx / PX * MM);
+  };
+  var TX = function (s, x0, y0, o) { s = String(s == null ? "" : s); if (needsR(s)) rtext(s, x0, y0, o); else d.text(lat(s), x0, y0, o); };
+  var wrap = function (s, w) {
+    s = String(s == null ? "" : s);
+    if (!needsR(s)) return d.splitTextToSize(lat(s), w);
+    var out = []; s.split("\n").forEach(function (para) { var line = ""; para.split(" ").forEach(function (wd) { var t = line ? line + " " + wd : wd; if (line && mw(t) > w) { out.push(line); line = wd; } else line = t; }); out.push(line); }); return out;
+  };
+  fill(T.band); d.rect(0, 0, W, 32, "F");
+  fill(T.rule); d.rect(0, 32, W, 1.6, "F");
+  if (x.logo && x.logo.d && x.logo.w && x.logo.h) {
+    try {
+      var lh = Math.min(16, 44 * x.logo.h / x.logo.w), lw = lh * x.logo.w / x.logo.h, ly = (32 - lh - 4) / 2;
+      fill("#FFFFFF"); d.roundedRect(M, ly, lw + 4, lh + 4, 1.5, 1.5, "F");
+      d.addImage(x.logo.d, "PNG", M + 2, ly + 2, lw, lh);
+    } catch (e) {}
+  } else { font("bold", 17); ink(T.bi); TX(wrap(i.business || "Your business", 100)[0], M, 19); }
+  font("bold", 26); ink(T.bi); TX(q ? Lb("quo") : Lb("inv"), R, 20, { align: "right" });
+  y = 42;
+  font("normal", 9.5);
+  var fromL = [], toL = [];
+  [x.baddr, x.bmail, x.bphone, x.gstin ? "GSTIN: " + x.gstin : ""].forEach(function (s) { if (s) fromL = fromL.concat(wrap(s, 80)); });
+  [x.caddr, i.client_email, x.cgstin ? "GSTIN: " + x.cgstin : ""].forEach(function (s) { if (s) toL = toL.concat(wrap(s, 80)); });
+  var bh = 19 + Math.max(fromL.length, toL.length) * 4.6;
+  [[M, Lb("from"), i.business || "Your business", fromL], [M + 94, Lb("to"), i.client_name || "Client name", toL]].forEach(function (b) {
+    fill(T.box); d.roundedRect(b[0], y, 88, bh, 2, 2, "F");
+    font("bold", 8); ink(MUT); TX(b[1], b[0] + 4, y + 6);
+    font("bold", 10.5); ink(TXT); TX(wrap(b[2], 80)[0], b[0] + 4, y + 11.5);
+    font("normal", 9.5); ink(TXT); b[3].forEach(function (ln, k) { TX(ln, b[0] + 4, y + 17 + k * 4.6); });
+  });
+  y += bh + 8;
+  var meta = [[q ? Lb("quono") : Lb("invno"), i.number], [Lb("date"), D.d], [q ? Lb("valid") : Lb("due"), D.due]];
+  if (x.pos) meta.push([Lb("sup"), stName(x.pos).slice(0, 22)]);
+  pen(LN); d.setLineWidth(0.3); d.line(R - 70, y, R, y);
+  meta.forEach(function (m, k) {
+    font("bold", 9.5); ink(TXT); TX(m[0].toUpperCase(), R - 68, y + 6 + k * 6);
+    font("normal", 9.5); TX(m[1], R, y + 6 + k * 6, { align: "right" });
+  });
+  d.line(R - 70, y + 2 + meta.length * 6, R, y + 2 + meta.length * 6);
+  y += 10 + meta.length * 6;
+  var head = function () {
+    fill(T.hd); d.rect(M, y, 182, 8, "F"); font("bold", 9); ink(T.hi);
+    TX(Lb("desc"), M + 3, y + 5.4); TX(Lb("qty"), 124, y + 5.4, { align: "right" }); TX(Lb("rate"), 150, y + 5.4, { align: "right" });
+    TX(Lb("gst"), 168, y + 5.4, { align: "right" }); TX(Lb("amt"), R - 3, y + 5.4, { align: "right" });
+    y += 8;
+  };
+  head();
+  (i.items || []).forEach(function (r) {
+    font("normal", 9.5);
+    var ls = wrap(r.d || Lb("item"), 90), h = ls.length * 4.6 + 4 + (r.h ? 4 : 0);
+    if (y + h > 272) { d.addPage(); y = 18; head(); font("normal", 9.5); }
+    ink(TXT);
+    ls.forEach(function (ln, k) { TX(ln, M + 3, y + 5.6 + k * 4.6); });
+    if (r.h) { font("normal", 8); ink(MUT); TX(Lb("hsn") + " " + r.h, M + 3, y + 5.6 + ls.length * 4.6); font("normal", 9.5); ink(TXT); }
+    TX(String(+r.q || 0), 124, y + 5.6, { align: "right" }); TX(num2(r.p), 150, y + 5.6, { align: "right" });
+    TX(g + "%", 168, y + 5.6, { align: "right" }); TX(num2((+r.q || 0) * (+r.p || 0)), R - 3, y + 5.6, { align: "right" });
+    pen(LN); d.setLineWidth(0.2); d.line(M, y + h, R, y + h);
+    y += h;
+  });
+  var tr = [[Lb("sub"), num2(S.s)]];
+  if (g) { if (S.mode === "igst") tr.push(["IGST (" + g + "%)", num2(S.ig)]); else { tr.push(["CGST (" + g / 2 + "%)", num2(S.cg)]); tr.push(["SGST (" + g / 2 + "%)", num2(S.sg)]); } }
+  if (!q && S.paid > 0) tr.push([Lb("paid"), "- " + num2(S.paid)]);
+  if (y + tr.length * 7 + 40 > 285) { d.addPage(); y = 18; }
+  y += 6; font("normal", 9.5); ink(TXT);
+  tr.forEach(function (r) { TX(r[0], R - 76, y + 4); TX(r[1], R - 3, y + 4, { align: "right" }); y += 7; });
+  var amt = q ? S.g : (S.paid > 0 ? S.bal : S.g), lbl = q ? Lb("total") : (S.paid > 0 ? Lb("baldue") : Lb("totdue"));
+  fill(T.ac); d.rect(R - 82, y, 82, 11, "F"); font("bold", 10); ink(T.ai);
+  TX(lbl, R - 79, y + 7.2); TX(num2(amt), R - 3, y + 7.2, { align: "right" });
+  y += 20;
+  var qr = qrOf(upiLink(i, S));
+  if (qr) {
+    if (y > 245) { d.addPage(); y = 18; }
+    var n = qr.getModuleCount(), cell = 28 / n;
+    fill("#000000");
+    for (var rr = 0; rr < n; rr++) for (var cc = 0; cc < n; cc++) if (qr.isDark(rr, cc)) d.rect(M + 2 + cc * cell, y + 2 + rr * cell, cell + 0.02, cell + 0.02, "F");
+    font("bold", 10.5); ink(TXT); TX(Lb("scan"), M + 38, y + 10);
+    font("normal", 9.5); TX(Lb("upi") + ": " + i.upi, M + 38, y + 16); TX(Lb("payvia").replace("{a}", "Rs. " + num2(amt)), M + 38, y + 21.5);
+    y += 36;
+  }
+  var note = function (title, text) {
+    font("normal", 9.5);
+    var ls = wrap(text, 182), h = 12 + ls.length * 4.6;
+    if (y + h > 285) { d.addPage(); y = 18; font("normal", 9.5); }
+    font("bold", 8.5); ink(MUT); TX(title, M, y + 4);
+    font("normal", 9.5); ink(TXT); ls.forEach(function (ln, k) { TX(ln, M, y + 10 + k * 4.6); });
+    y += h;
+  };
+  if (x.bank && String(x.bank).trim()) note(Lb("bank"), x.bank);
+  note(q ? Lb("terms") : Lb("pterms"), termsOf(i));
+  return d;
+}
+async function preparePdf(inv) {
+  if (typeof document === "undefined" || !document.fonts || !document.fonts.load) return;
+  var x = inv.extra || {}, t = [inv.business, inv.client_name, inv.client_email, x.baddr, x.caddr, x.bank, x.terms, JSON.stringify(inv.items || []), JSON.stringify(LB[x.lang] || {})].join(" "), jobs = [];
+  if (/[\u0C00-\u0C7F]/.test(t)) { jobs.push(document.fonts.load('400 20px "Noto Sans Telugu"', t)); jobs.push(document.fonts.load('700 20px "Noto Sans Telugu"', t)); }
+  if (/[\u0900-\u097F]/.test(t)) { jobs.push(document.fonts.load('400 20px "Noto Sans Devanagari"', t)); jobs.push(document.fonts.load('700 20px "Noto Sans Devanagari"', t)); }
+  try { await Promise.all(jobs); } catch (e) {}
+}
+var SUPABASE_URL = "https://omzebtgnqvxqmfvowywz.supabase.co";
+var SUPABASE_KEY = "sb_publishable_dNmjuL7oIyYJzOSSG6XsNg_gAj0ewoE";
+var cur = null;
+function bad(why) { $("paper").innerHTML = '<div class="card" style="padding:24px"><h3>This invoice link is not available</h3><p class="mut" style="margin-top:6px">It may be incorrect or removed.' + (why ? "<br><small>" + esc(why) + "</small>" : "") + "</p></div>"; }
+var id = new URLSearchParams(location.search).get("id") || "";
+if (!/^[0-9a-f-]{36}$/i.test(id)) { bad("Missing or invalid invoice id."); }
+else if (typeof supabase === "undefined") { bad("Could not load the service. Check your internet."); }
+else {
+  supabase.createClient(SUPABASE_URL, SUPABASE_KEY).rpc("get_invoice", { p_id: id }).then(function (r) {
+    if (r.error) { bad(r.error.message); return; }
+    if (!r.data) { bad("Invoice not found."); return; }
+    cur = r.data; $("paper").innerHTML = invHtml(cur); $("pdf").hidden = false;
+    var T = total(cur), u = upiLink(cur, T), pl = payLink(cur);
+    if (pl) { $("pay2").href = pl; $("pay2").textContent = "Pay " + inr2(T.bal) + " online"; $("pay2").hidden = false; }
+    if (u) { $("pay").href = u; $("pay").textContent = "Pay " + inr2(T.paid > 0 ? T.bal : T.g) + " with UPI"; $("pay").hidden = false; }
+  });
+}
+$("pdf").addEventListener("click", async function () {
+  try { if (typeof window.jspdf === "undefined") throw new Error("PDF tool did not load. Refresh and try again."); await preparePdf(cur); invPdf(cur).save(cur.number + ".pdf"); }
+  catch (e) { alert("Could not create the PDF: " + (e.message || e)); }
+});
+(function () { try { var t = localStorage.getItem("ih_theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {} })();
+</script>
+</body>
+</html>
